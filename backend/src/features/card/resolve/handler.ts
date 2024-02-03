@@ -30,9 +30,6 @@ export const Handler: MyRoute<Interface> =
               },
             },
           },
-          include: {
-            session: true,
-          },
         },
         externalCardId: true,
       },

@@ -19,7 +19,8 @@ export const Handler: MyRoute<Interface> =
       orderBy: {
         id: "desc",
       },
-      include: {
+      select: {
+        id: true,
         cards: {
           select: {
             id: true,
