@@ -1,7 +1,7 @@
 <script>
     import Card from '$lib/components/Card.svelte';
 
-    export let playerCards = [];
+    export let playerCards;
     let selectedCard = null;
 
     function selectCard(card) {

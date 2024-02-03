@@ -1,5 +1,6 @@
 <script>
     import { goto } from '$app/navigation';
+    import {cards} from "$lib/mock_cards.js";
     let invitationCode = "";
 
     // Updated handleCreate function
@@ -25,8 +26,27 @@
             // Handle errors, perhaps show an error message to the user
     }
 
-    const handleJoin = () => {
+    async function handleJoin() {
         console.log('Join session with code:', invitationCode);
+        const response = await fetch(`http://127.0.0.1:3000/sessions/join/${invitationCode}`, {
+            method: 'GET',
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const payload = await response.json();
+
+        // Store the response in local storage
+        localStorage.setItem('deck', payload.deck);
+        localStorage.setItem('session', payload.session);
+        localStorage.setItem('token', payload.token);
+        localStorage.setItem('cards', payload.cards);
+
+        // Redirect to the game page
+        goto('/'); // Assuming the game page is the root
+        // Handle errors, perhaps show an error message to the user
         // Implement the logic to join with an invitation code
     };
 

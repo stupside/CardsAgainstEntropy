@@ -2,13 +2,33 @@
     import Hand from '$lib/components/Hand.svelte';
     import Prompt from '$lib/components/Prompt.svelte';
     import PlayersList from '$lib/components/PlayersList.svelte';
+    import {GameService} from "$lib/services.js";
 
+
+    const session = localStorage.getItem('session');
+    const deckId = localStorage.getItem('deck');
+    const token = localStorage.getItem('token');
+    let cards = localStorage.getItem('cards');
+
+    cards = cards.split(',').map(Number);
+    console.log(cards);
+
+    const game = new GameService(token, session, deckId, cards);
+    // replace by fetching from back
     let promptCard = { text: "Server-chosen prompt card with a space _ ." };
-    let playerCards = [
-        { text: "Response Card 1" },
-        { text: "Response Card 2" },
-        // Add more cards
-    ];
+
+    let playerCards = [];
+
+    for (const index in cards) {
+        playerCards.push(
+            {
+                text: game.fetchResponseCardText(index),
+                id: index
+            }
+        )
+    }
+
+    console.log(playerCards)
 
     let players = [
         { name: "Player 1", isHighlighted: false },

@@ -5,7 +5,7 @@
 </script>
 
 <article class={`card ${isSelected ? 'selected' : ''}`}>
-    {responseCard.text}
+    {responseCard.text.text}
 </article>
 
 <style>
