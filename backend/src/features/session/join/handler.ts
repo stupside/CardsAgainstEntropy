@@ -51,7 +51,7 @@ export const Handler: MyRoute<Interface> =
 
     const token = await response.jwtSign(payload);
 
-    const gameready = decks + 1 === fastify.config.GAME_MAX_PLAYERS;
+    const gameready = decks === fastify.config.GAME_MAX_PLAYERS;
 
     if (gameready) {
       await fastify.redis.invitations?.del(invitation);
