@@ -19,7 +19,8 @@ export const Handler: MyRoute<Interface> =
       orderBy: {
         id: "desc",
       },
-      include: {
+      select: {
+        id: true,
         cards: {
           select: {
             id: true,
@@ -67,20 +68,27 @@ export const Handler: MyRoute<Interface> =
       },
     });
 
-    const externalCardId = await prisma.card.count({
-      where: {
-        deck: {
-          sessionId: identity.session,
+    const card = await prisma.$transaction(async () => {
+      const externalCardId = await prisma.card.count({
+        where: {
+          deck: {
+            sessionId: identity.session,
+          },
         },
-      },
-    });
+      });
 
-    // Add a new card to the deck as we have drawn one
-    const card = await prisma.card.create({
-      data: {
-        externalCardId,
-        deckId: identity.deck,
-      },
+      // Add a new card to the deck as we have drawn one
+      const card = await prisma.card.create({
+        data: {
+          externalCardId,
+          deckId: identity.deck,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      return card;
     });
 
     await dispatch({

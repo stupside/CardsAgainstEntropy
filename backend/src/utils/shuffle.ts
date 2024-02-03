@@ -17,5 +17,5 @@ export const shuffleArrayIndexes = <TValue>(
     return aValue - bValue;
   });
 
-  return permutedIndices;
+  return permutedIndices.map((index) => array[index]);
 };

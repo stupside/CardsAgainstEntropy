@@ -4,11 +4,14 @@ import { MyRoute, dispatch, GameSessionSchema } from "../../../fastify";
 
 import prisma from "../../../utils/prisma";
 
-import { Interface } from "./schema";
-
-import sse from "../../hook/sse";
 import draw from "../../card/draw";
-import resolve from "../../card/resolve";
+import resolveCard from "../../card/resolve";
+
+import sse from "../../session/sse";
+
+import resolveRound from "../../round/resolve";
+
+import { Interface } from "./schema";
 
 export const Handler: MyRoute<Interface> =
   (fastify) => async (request, response) => {
@@ -30,25 +33,51 @@ export const Handler: MyRoute<Interface> =
       return response.unauthorized("Too many players.");
     }
 
-    const deck = await prisma.deck.create({
-      data: {
-        sessionId: session,
-      },
-      select: {
-        id: true,
-        sessionId: true,
-      },
+    const deck = await prisma.$transaction(async () => {
+      const cards = await prisma.card.count({
+        where: {
+          deck: {
+            sessionId: session,
+          },
+        },
+      });
+
+      const deck = await prisma.deck.create({
+        data: {
+          sessionId: session,
+          cards: {
+            createMany: {
+              data: Array.from({
+                length: fastify.config.GAME_MAX_CARDS,
+              }).map((_, index) => ({
+                externalCardId: cards + index,
+              })),
+            },
+          },
+        },
+        select: {
+          id: true,
+          sessionId: true,
+          cards: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      return deck;
     });
 
     const payload: Static<typeof GameSessionSchema> = {
       deck: deck.id,
-      claims: [sse.Claim, draw.Claim, resolve.Claim],
       session: deck.sessionId,
+      claims: [sse.Claim, draw.Claim, resolveCard.Claim, resolveRound.Claim],
     };
 
     const token = await response.jwtSign(payload);
 
-    const gameready = decks + 1 === fastify.config.GAME_MAX_PLAYERS;
+    const gameready = decks === fastify.config.GAME_MAX_PLAYERS;
 
     if (gameready) {
       await fastify.redis.invitations?.del(invitation);
@@ -66,34 +95,10 @@ export const Handler: MyRoute<Interface> =
       },
     });
 
-    const create = Array.from({
-      length: fastify.config.GAME_MAX_CARDS,
-    }).map(async () => {
-      const cards = await prisma.card.count({
-        where: {
-          deck: {
-            sessionId: session,
-          },
-        },
-      });
-
-      return prisma.card.create({
-        data: {
-          deckId: deck.id,
-          externalCardId: cards,
-        },
-        select: {
-          id: true,
-        },
-      });
-    });
-
-    const created = await Promise.all(create);
-
     return await response.send({
       token,
       deck: deck.id,
       session: deck.sessionId,
-      cards: created.map((card) => card.id),
+      cards: deck.cards.map((card) => card.id),
     });
   };
