@@ -4,7 +4,7 @@ import { Static, Type } from "@sinclair/typebox";
 
 const Body = Type.Object({
   invitation: Type.String({
-    description: "THe invitation to the session.",
+    description: "The invitation to the session.",
   }),
 });
 

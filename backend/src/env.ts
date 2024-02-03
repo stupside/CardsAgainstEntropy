@@ -14,6 +14,7 @@ const Schema = Type.Object({
   GAME_JWT_EXPIRY: Type.String(),
   GAME_MAX_PLAYERS: Type.Number(),
   GAME_CARDS_PATH: Type.String(),
+  GAME_QUESTIONS_PATH: Type.String(),
 });
 
 declare module "fastify" {

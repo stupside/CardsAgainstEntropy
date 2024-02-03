@@ -10,7 +10,7 @@ import { Interface } from "./schema";
 
 export const Handler: MyRoute<Interface> =
   (fastify) => async (request, response) => {
-    const value = await fastify.redis.secrets?.get(
+    const value = await fastify.redis.invitations?.get(
       request.body.invitation.toLowerCase()
     );
 

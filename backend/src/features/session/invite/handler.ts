@@ -18,7 +18,7 @@ export const Handler: MyRoute<Interface> =
       .export()
       .toString("hex");
 
-    await fastify.redis.invitation?.set(invitation, identity.session);
+    await fastify.redis.invitations?.set(invitation, identity.session);
 
     const callback = `${request.query.redirection}/${encodeURIComponent(
       invitation

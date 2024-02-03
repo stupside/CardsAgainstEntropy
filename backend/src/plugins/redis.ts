@@ -18,7 +18,7 @@ const plugin = fp(async (fastify, _) => {
   });
 
   await fastify.register(redis, {
-    namespace: "secrets",
+    namespace: "invitations",
     url: fastify.config.GAME_REDIS_URL,
   });
 });

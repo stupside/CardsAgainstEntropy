@@ -1,20 +1,37 @@
+import { Static, Type } from "@sinclair/typebox";
+import { Value } from "@sinclair/typebox/value";
 import { FastifyInstance } from "fastify";
 
 import fs from "fs";
 
-type Cards = {
-  list: Array<{ id: number; text: string }>;
-  questions: Array<{ id: number; text: string }>;
-};
+const Card = Type.Object({
+  id: Type.Number(),
+  text: Type.String(),
+});
 
-let _cards: Cards | undefined;
+const Cards = Type.Object({
+  list: Type.Array(Card),
+  questions: Type.Array(Card),
+});
+
+let _cards: Static<typeof Cards> | undefined;
 
 export const getCards = async (fastify: FastifyInstance) => {
   if (_cards) return _cards;
 
-  const content = fs.readFileSync(fastify.config.GAME_CARDS_PATH, "utf-8");
+  const list = Value.Cast(
+    Type.Array(Card),
+    JSON.parse(
+      await fs.promises.readFile(fastify.config.GAME_CARDS_PATH, "utf-8")
+    )
+  );
 
-  const cards = JSON.parse(content) as Cards;
+  const questions = Value.Cast(
+    Type.Array(Card),
+    JSON.parse(
+      await fs.promises.readFile(fastify.config.GAME_QUESTIONS_PATH, "utf-8")
+    )
+  );
 
-  return (_cards = cards);
+  return (_cards = { list, questions });
 };

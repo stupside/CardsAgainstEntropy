@@ -25,6 +25,7 @@
     "@fastify/swagger": "^8.10.1",
     "@fastify/swagger-ui": "^1.9.3",
     "@fastify/type-provider-typebox": "^3.5.0",
+    "@pythnetwork/entropy-sdk-solidity": "^1.1.0",
     "@sinclair/typebox": "^0.31.16",
     "fastify": "^4.0.0",
     "fastify-cli": "^5.8.0",

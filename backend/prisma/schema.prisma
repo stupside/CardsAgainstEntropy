@@ -13,6 +13,8 @@ datasource db {
 model Session {
   id Int @id @default(autoincrement())
 
+  draw Draw[] @relation()
+
   decks Deck[] @relation()
 }
 
@@ -30,8 +32,20 @@ model Card {
   id Int @id @default(autoincrement())
 
   deckId Int
+  drawId Int
 
   extrnalCardId Int
 
+  draw Draw @relation(fields: [drawId], references: [id])
   deck Deck @relation(fields: [deckId], references: [id])
+}
+
+model Draw {
+  id Int @id @default(autoincrement())
+
+  sessionId Int
+
+  cards Card[] @relation()
+
+  session Session @relation(fields: [sessionId], references: [id])
 }
