@@ -2,7 +2,7 @@ import { FastifySchema, RouteGenericInterface } from "fastify";
 
 import { Static, Type } from "@sinclair/typebox";
 
-const Body = Type.Object({
+const Params = Type.Object({
   invitation: Type.String({
     description: "The invitation to the session.",
   }),
@@ -16,15 +16,15 @@ const Reply = Type.Object({
 });
 
 export interface Interface extends RouteGenericInterface {
-  Body: Static<typeof Body>;
   Reply: Static<typeof Reply>;
+  Params: Static<typeof Params>;
 }
 
 export const Schema: FastifySchema = {
   tags: ["session"],
   description:
     "Join a session using an invitation. An sse event 'session/join' will be dispatched.",
-  body: Body,
+  params: Params,
   response: {
     200: Reply,
   },

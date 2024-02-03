@@ -1,9 +1,7 @@
-// import pyth from "@pythnetwork/entropy-sdk-solidity";
-
 import { MyRoute } from "../../../fastify";
-import { getCards } from "../../../utils/cards";
 
 import prisma from "../../../utils/prisma";
+import { getCards } from "../../../utils/cards";
 import { shuffleArrayIndexes } from "../../../utils/shuffle";
 
 import { Interface } from "./schema";
@@ -31,6 +29,9 @@ export const Handler: MyRoute<Interface> =
                 seed: true,
               },
             },
+          },
+          include: {
+            session: true,
           },
         },
         externalCardId: true,

@@ -5,11 +5,15 @@ import { Static } from "@sinclair/typebox";
 import { MyRoute, GameSessionSchema } from "../../../fastify";
 
 import prisma from "../../../utils/prisma";
+
 import { getRandomNumber } from "../../../utils/pyth";
 
-import sse from "../../hook/sse";
-
 import { Interface } from "./schema";
+
+import sse from "../../hook/sse";
+import draw from "../../card/draw";
+import resolve from "../../card/resolve";
+import question from "../../card/question";
 
 const REDIS_HASH_KEY_LEN = 32;
 
@@ -37,7 +41,7 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
   const payload: Static<typeof GameSessionSchema> = {
     deck: deck.id,
     session: session.id,
-    claims: [sse.Claim],
+    claims: [sse.Claim, resolve.Claim, draw.Claim, question.Claim],
   };
 
   const token = await response.jwtSign(payload);

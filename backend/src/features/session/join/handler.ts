@@ -4,13 +4,15 @@ import { MyRoute, dispatch, GameSessionSchema } from "../../../fastify";
 
 import prisma from "../../../utils/prisma";
 
-import sse from "../../hook/sse";
-
 import { Interface } from "./schema";
+
+import sse from "../../hook/sse";
+import draw from "../../card/draw";
+import resolve from "../../card/resolve";
 
 export const Handler: MyRoute<Interface> =
   (fastify) => async (request, response) => {
-    const invitation = request.body.invitation.toLowerCase();
+    const invitation = request.params.invitation.toLowerCase();
 
     const value = await fastify.redis.invitations?.get(invitation);
 
@@ -40,7 +42,7 @@ export const Handler: MyRoute<Interface> =
 
     const payload: Static<typeof GameSessionSchema> = {
       deck: deck.id,
-      claims: [sse.Claim],
+      claims: [sse.Claim, draw.Claim, resolve.Claim],
       session: deck.sessionId,
     };
 

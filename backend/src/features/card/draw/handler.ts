@@ -75,6 +75,7 @@ export const Handler: MyRoute<Interface> =
       },
     });
 
+    // Add a new card to the deck as we have drawn one
     const card = await prisma.card.create({
       data: {
         externalCardId,

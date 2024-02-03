@@ -1,5 +1,3 @@
-// import pyth from "@pythnetwork/entropy-sdk-solidity";
-
 import { MyRoute, dispatch } from "../../../fastify";
 
 import prisma from "../../../utils/prisma";
@@ -13,7 +11,7 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
     return response.unauthorized();
   }
 
-  const extrenalQuestionId = await prisma.round.count({
+  const externalQuestionId = await prisma.round.count({
     where: {
       sessionId: identity.session,
     },
@@ -31,12 +29,12 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
     event: {
       type: "/card/question",
       data: {
-        question: extrenalQuestionId,
+        question: externalQuestionId,
       },
     },
   });
 
   return response.send({
-    question: extrenalQuestionId,
+    id: externalQuestionId,
   });
 };

@@ -4,7 +4,9 @@ import join from "../features/session/join";
 import create from "../features/session/create";
 
 const route = async (fastify: FastifyInstance) => {
-  fastify.post("/join", join.Shorthand, join.Route(fastify));
+  // GET
+  fastify.get("/join/:invitiation", join.Shorthand, join.Route(fastify));
+  // POST
   fastify.post("/create", create.Shorthand, create.Route(fastify));
 };
 
