@@ -10,7 +10,7 @@ import cors from "@fastify/cors";
 const plugin = fp(async (fastify, _) => {
   await fastify.register(cors, {
     hook: "preHandler",
-    origin: [fastify.config.GAME_FRONTEND_CSR_URL],
+    origin: '*',
   });
 });
 
