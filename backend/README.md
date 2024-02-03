@@ -2,6 +2,12 @@
 
 This project was bootstrapped with Fastify-CLI.
 
+## Setup the database
+
+### `npx prisma generate`
+
+### `npx prisma db push`
+
 ## Available Scripts
 
 In the project directory, you can run:
