@@ -1,8 +1,6 @@
 import { MyRoute, dispatch } from "../../../fastify";
-import { getCards } from "../../../utils/cards";
 
 import prisma from "../../../utils/prisma";
-import { getRandomNumber } from "../../../utils/pyth";
 
 import { Interface } from "./schema";
 
@@ -14,7 +12,7 @@ export const Handler: MyRoute<Interface> =
       return response.unauthorized();
     }
 
-    const draw = await prisma.draw.findFirst({
+    const round = await prisma.round.findFirst({
       where: {
         sessionId: identity.session,
       },
@@ -32,18 +30,18 @@ export const Handler: MyRoute<Interface> =
     });
 
     // Can the user draw a card
-    if (draw === null) {
+    if (round === null) {
       return response.badRequest("The draw does not exist");
     }
 
     // Check if the user already has a card from this deck drawn
-    if (draw.cards.some((card) => card.deckId === identity.deck)) {
+    if (round.cards.some((card) => card.deckId === identity.deck)) {
       return response.unauthorized(
-        "You are not allowed to draw a card. You already have drawn one."
+        "You are not allowed to draw a card. You already have drawn one"
       );
     }
 
-    const drawn = await prisma.card.findFirst({
+    const target = await prisma.card.findFirst({
       where: {
         id: request.body.card,
         deckId: identity.deck,
@@ -53,44 +51,34 @@ export const Handler: MyRoute<Interface> =
       },
     });
 
-    if (drawn === null) {
+    if (target === null) {
       return response.badRequest(
-        "You are not allowed to draw a card. The card does not exist in your deck."
+        "You are not allowed to draw this card. The card does not exist in your deck."
       );
     }
 
-    // Draw this card from the deck
+    // Draw this card from the deck so the user can't draw it again
     await prisma.card.update({
       data: {
-        drawId: draw.id,
+        roundId: round.id,
       },
       where: {
-        id: drawn.id,
+        id: target.id,
       },
     });
 
-    const cards = await getCards(fastify);
-
-    const ignore = await prisma.card.findMany({
+    const externalCardId = await prisma.card.count({
       where: {
         deck: {
           sessionId: identity.session,
         },
       },
-      select: {
-        id: true,
-        externalCardId: true,
-      },
     });
 
     const card = await prisma.card.create({
       data: {
+        externalCardId,
         deckId: identity.deck,
-        externalCardId: getRandomNumber(
-          0,
-          cards.list.length,
-          ignore.map((card) => card.externalCardId)
-        ),
       },
     });
 
@@ -98,9 +86,9 @@ export const Handler: MyRoute<Interface> =
       fastify,
       session: identity.session,
       event: {
-        type: "/deck/draw",
+        type: "/card/draw",
         data: {
-          card: drawn.id,
+          card: target.id,
           deck: identity.deck,
         },
       },

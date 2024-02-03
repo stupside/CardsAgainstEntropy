@@ -8,9 +8,6 @@ import sse from "../../hook/sse";
 
 import { Interface } from "./schema";
 
-import { getCards } from "../../../utils/cards";
-import { getRandomNumber } from "../../../utils/pyth";
-
 export const Handler: MyRoute<Interface> =
   (fastify) => async (request, response) => {
     const invitation = request.body.invitation.toLowerCase();
@@ -67,33 +64,21 @@ export const Handler: MyRoute<Interface> =
       },
     });
 
-    const cards = await getCards(fastify);
-
     const create = Array.from({
       length: fastify.config.GAME_MAX_CARDS,
     }).map(async () => {
-      const ignore = await prisma.card.findMany({
+      const cards = await prisma.card.count({
         where: {
           deck: {
             sessionId: session,
           },
         },
-        select: {
-          id: true,
-          externalCardId: true,
-        },
       });
-
-      const card = getRandomNumber(
-        0,
-        cards.list.length,
-        ignore.map((card) => card.externalCardId)
-      );
 
       return prisma.card.create({
         data: {
           deckId: deck.id,
-          externalCardId: card,
+          externalCardId: cards,
         },
         select: {
           id: true,

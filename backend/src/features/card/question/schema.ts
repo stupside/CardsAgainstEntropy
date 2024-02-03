@@ -3,7 +3,6 @@ import { FastifySchema, RouteGenericInterface } from "fastify";
 import { Static, Type } from "@sinclair/typebox";
 
 const Reply = Type.Object({
-  draw: Type.Number({ description: "The id of the draw" }),
   question: Type.Number({ description: "The id of the question" }),
 });
 

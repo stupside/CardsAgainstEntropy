@@ -2,25 +2,22 @@ import { FastifySchema, RouteGenericInterface } from "fastify";
 
 import { Static, Type } from "@sinclair/typebox";
 
-const Body = Type.Object({
-  card: Type.Number({
-    description: "The id of the card to draw",
-  }),
-});
-
-const Reply = Type.Object({
+const Params = Type.Object({
   card: Type.Number(),
 });
 
+const Reply = Type.Object({
+  text: Type.String(),
+});
+
 export interface Interface extends RouteGenericInterface {
-  Body: Static<typeof Body>;
-  Reply: Static<typeof Reply>;
+  Params: Static<typeof Params>;
 }
 
 export const Schema: FastifySchema = {
-  tags: ["deck"],
-  description: "Draw a card from a deck and get a new one back.",
-  body: Body,
+  tags: ["card"],
+  description: "Retrieve a random question",
+  params: Params,
   response: {
     200: Reply,
   },

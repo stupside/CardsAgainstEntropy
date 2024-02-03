@@ -1,13 +1,5 @@
-export const getRandomNumber = (
-  min: number,
-  max: number,
-  blacklist: Array<number>
-): number => {
-  const value = Math.floor(Math.random() * (max - min + 1) + min);
+export const getRandomNumber = (): number => {
+  // TODO: generate a random seed with pyth
 
-  if (blacklist.includes(value)) {
-    return getRandomNumber(min, max, blacklist);
-  }
-
-  return value;
+  return Math.random();
 };

@@ -13,9 +13,10 @@ datasource db {
 model Session {
   id Int @id @default(autoincrement())
 
-  draw Draw[] @relation()
+  seed Int
 
-  decks Deck[] @relation()
+  decks  Deck[]  @relation()
+  rounds Round[] @relation()
 }
 
 model Deck {
@@ -31,16 +32,16 @@ model Deck {
 model Card {
   id Int @id @default(autoincrement())
 
-  deckId Int
-  drawId Int?
+  deckId  Int
+  roundId Int?
 
   externalCardId Int
 
-  deck Deck  @relation(fields: [deckId], references: [id])
-  draw Draw? @relation(fields: [drawId], references: [id])
+  deck  Deck   @relation(fields: [deckId], references: [id])
+  round Round? @relation(fields: [roundId], references: [id])
 }
 
-model Draw {
+model Round {
   id Int @id @default(autoincrement())
 
   sessionId Int

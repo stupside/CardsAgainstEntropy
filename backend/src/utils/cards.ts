@@ -1,6 +1,7 @@
-import { Static, Type } from "@sinclair/typebox";
-import { Value } from "@sinclair/typebox/value";
 import { FastifyInstance } from "fastify";
+
+import { Value } from "@sinclair/typebox/value";
+import { Static, Type } from "@sinclair/typebox";
 
 import fs from "fs";
 
