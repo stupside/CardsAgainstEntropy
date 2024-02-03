@@ -4,11 +4,14 @@ import { MyRoute, dispatch, GameSessionSchema } from "../../../fastify";
 
 import prisma from "../../../utils/prisma";
 
-import { Interface } from "./schema";
-
-import sse from "../../hook/sse";
 import draw from "../../card/draw";
-import resolve from "../../card/resolve";
+import resolveCard from "../../card/resolve";
+
+import sse from "../../session/sse";
+
+import resolveRound from "../../round/resolve";
+
+import { Interface } from "./schema";
 
 export const Handler: MyRoute<Interface> =
   (fastify) => async (request, response) => {
@@ -42,8 +45,8 @@ export const Handler: MyRoute<Interface> =
 
     const payload: Static<typeof GameSessionSchema> = {
       deck: deck.id,
-      claims: [sse.Claim, draw.Claim, resolve.Claim],
       session: deck.sessionId,
+      claims: [sse.Claim, draw.Claim, resolveCard.Claim, resolveRound.Claim],
     };
 
     const token = await response.jwtSign(payload);

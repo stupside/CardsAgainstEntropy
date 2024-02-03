@@ -11,15 +11,12 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
     return response.unauthorized();
   }
 
-  const externalQuestionId = await prisma.round.count({
-    where: {
-      sessionId: identity.session,
-    },
-  });
-
-  await prisma.round.create({
+  const round = await prisma.round.create({
     data: {
       sessionId: identity.session,
+    },
+    select: {
+      id: true,
     },
   });
 
@@ -27,14 +24,14 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
     fastify,
     session: identity.session,
     event: {
-      type: "/card/question",
+      type: "/round/next",
       data: {
-        question: externalQuestionId,
+        round: round.id,
       },
     },
   });
 
   return response.send({
-    id: externalQuestionId,
+    round: round.id,
   });
 };
