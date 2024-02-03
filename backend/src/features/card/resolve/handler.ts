@@ -41,15 +41,9 @@ export const Handler: MyRoute<Interface> =
 
     const cards = await getCards(fastify);
 
-    const indexes = shuffleArrayIndexes(card.deck.session.seed, cards.list);
-
-    const index = indexes.at(card.externalCardId);
-
-    if (index === undefined) {
-      return response.notFound("Could not resolve card with external card id");
-    }
-
-    const value = cards.list.at(index);
+    const value = shuffleArrayIndexes(card.deck.session.seed, cards.list)[
+      card.externalCardId
+    ];
 
     if (value === undefined) {
       return response.internalServerError();

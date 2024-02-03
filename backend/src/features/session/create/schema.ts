@@ -7,6 +7,7 @@ const Reply = Type.Object({
   session: Type.Number({ description: "The id of the session" }),
   token: Type.String({ description: "The token for the session" }),
   invitation: Type.String({ description: "The invitation for the session" }),
+  cards: Type.Array(Type.Number({ description: "The id of the card" })),
 });
 
 export interface Interface extends RouteGenericInterface {

@@ -42,21 +42,15 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
 
   const cards = await getCards(fastify);
 
-  const indexes = shuffleArrayIndexes(round.session.seed, cards.questions);
-
   const externalQuestionId = await prisma.round.count({
     where: {
       sessionId: identity.session,
     },
   });
 
-  const index = indexes.at(externalQuestionId);
-
-  if (index === undefined) {
-    return response.notFound("Could not resolve the question with external id");
-  }
-
-  const question = cards.questions.at(index);
+  const question = shuffleArrayIndexes(round.session.seed, cards.questions)[
+    externalQuestionId
+  ];
 
   if (question === undefined) {
     return response.internalServerError();

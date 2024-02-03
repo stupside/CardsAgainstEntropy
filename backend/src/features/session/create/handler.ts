@@ -26,23 +26,43 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
   const session = await prisma.session.create({
     data: {
       seed,
+      decks: {
+        create: {
+          cards: {
+            createMany: {
+              data: Array.from({
+                length: fastify.config.GAME_MAX_CARDS,
+              }).map((_, index) => ({
+                externalCardId: index,
+              })),
+            },
+          },
+        },
+      },
     },
     select: {
       id: true,
+      decks: {
+        select: {
+          id: true,
+          cards: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      },
     },
   });
 
-  const { id } = await prisma.deck.create({
-    data: {
-      sessionId: session.id,
-    },
-    select: {
-      id: true,
-    },
-  });
+  const myDeck = session.decks.at(0);
+
+  if (myDeck === undefined) {
+    return response.internalServerError();
+  }
 
   const payload: Static<typeof GameSessionSchema> = {
-    deck: id,
+    deck: myDeck.id,
     session: session.id,
     claims: [
       sse.Claim,
@@ -64,8 +84,9 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
 
   return await response.send({
     token,
-    deck: id,
+    deck: myDeck.id,
     session: session.id,
     invitation: invitation,
+    cards: myDeck.cards.map((card) => card.id),
   });
 };
