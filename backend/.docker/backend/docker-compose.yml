@@ -1,0 +1,27 @@
+services:
+  game-database:
+    image: postgres
+    hostname: database.game
+    container_name: database
+    restart: always
+    environment:
+      POSTGRES_USER: "game"
+      POSTGRES_PASSWORD: "game"
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: bitnami/redis
+    hostname: redis.game
+    container_name: redis
+    restart: always
+    environment:
+      REDIS_REPLICATION_MODE: "master"
+      REDIS_PASSWORD: "game"
+    ports:
+      - "6379:6379"
+
+networks:
+  default:
+    name: game
+    driver: bridge
