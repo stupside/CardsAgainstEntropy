@@ -11,7 +11,7 @@ export interface Interface extends RouteGenericInterface {
 }
 
 export const Schema: FastifySchema = {
-  tags: ["deck"],
+  tags: ["card"],
   description: "Retrieve a random question",
   response: {
     200: Reply,
