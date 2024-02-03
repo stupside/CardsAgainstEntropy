@@ -3,6 +3,7 @@ import { FastifyInstance } from "fastify";
 import sse from "../features/hook/sse";
 
 const route = async (fastify: FastifyInstance) => {
+  // GET
   fastify.get("/sse", sse.Shorthand, sse.Route(fastify));
 };
 

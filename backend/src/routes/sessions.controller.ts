@@ -1,13 +1,13 @@
 import { FastifyInstance } from "fastify";
 
-import connect from "../features/session/join";
+import join from "../features/session/join";
 import create from "../features/session/create";
-import invite from "../features/session/invite";
 
 const route = async (fastify: FastifyInstance) => {
-  fastify.get("", invite.Shorthand, invite.Route(fastify));
-  fastify.post("", create.Shorthand, create.Route(fastify));
-  fastify.post("/connect", connect.Shorthand, connect.Route(fastify));
+  // GET
+  fastify.get("/join/:invitation", join.Shorthand, join.Route(fastify));
+  // POST
+  fastify.post("/create", create.Shorthand, create.Route(fastify));
 };
 
 export default async (fastify: FastifyInstance) => {

@@ -4,15 +4,17 @@ import { MyRoute, dispatch, GameSessionSchema } from "../../../fastify";
 
 import prisma from "../../../utils/prisma";
 
-import sse from "../../hook/sse";
-
 import { Interface } from "./schema";
+
+import sse from "../../hook/sse";
+import draw from "../../card/draw";
+import resolve from "../../card/resolve";
 
 export const Handler: MyRoute<Interface> =
   (fastify) => async (request, response) => {
-    const value = await fastify.redis.invitations?.get(
-      request.body.invitation.toLowerCase()
-    );
+    const invitation = request.params.invitation.toLowerCase();
+
+    const value = await fastify.redis.invitations?.get(invitation);
 
     if (!value) return response.unauthorized();
 
@@ -40,11 +42,17 @@ export const Handler: MyRoute<Interface> =
 
     const payload: Static<typeof GameSessionSchema> = {
       deck: deck.id,
-      claims: [sse.Claim],
+      claims: [sse.Claim, draw.Claim, resolve.Claim],
       session: deck.sessionId,
     };
 
     const token = await response.jwtSign(payload);
+
+    const gameready = decks + 1 === fastify.config.GAME_MAX_PLAYERS;
+
+    if (gameready) {
+      await fastify.redis.invitations?.del(invitation);
+    }
 
     await dispatch({
       fastify,
@@ -52,15 +60,40 @@ export const Handler: MyRoute<Interface> =
       event: {
         type: "/session/join",
         data: {
+          gameready,
           deck: deck.id,
-          gameready: decks + 1 === fastify.config.GAME_MAX_PLAYERS,
         },
       },
     });
+
+    const create = Array.from({
+      length: fastify.config.GAME_MAX_CARDS,
+    }).map(async () => {
+      const cards = await prisma.card.count({
+        where: {
+          deck: {
+            sessionId: session,
+          },
+        },
+      });
+
+      return prisma.card.create({
+        data: {
+          deckId: deck.id,
+          externalCardId: cards,
+        },
+        select: {
+          id: true,
+        },
+      });
+    });
+
+    const created = await Promise.all(create);
 
     return await response.send({
       token,
       deck: deck.id,
       session: deck.sessionId,
+      cards: created.map((card) => card.id),
     });
   };

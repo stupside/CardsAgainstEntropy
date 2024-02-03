@@ -6,6 +6,7 @@ const Reply = Type.Object({
   deck: Type.Number({ description: "The id of the deck" }),
   session: Type.Number({ description: "The id of the session" }),
   token: Type.String({ description: "The token for the session" }),
+  invitation: Type.String({ description: "The invitation for the session" }),
 });
 
 export interface Interface extends RouteGenericInterface {
