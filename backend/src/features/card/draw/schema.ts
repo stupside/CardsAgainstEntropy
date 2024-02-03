@@ -19,6 +19,7 @@ export interface Interface extends RouteGenericInterface {
 
 export const Schema: FastifySchema = {
   tags: ["card"],
+  security: [{ bearerAuth: [] }],
   description: "Draw a card from a deck and get a new one back.",
   body: Body,
   response: {
