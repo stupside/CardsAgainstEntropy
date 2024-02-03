@@ -32,12 +32,12 @@ model Card {
   id Int @id @default(autoincrement())
 
   deckId Int
-  drawId Int
+  drawId Int?
 
-  extrnalCardId Int
+  externalCardId Int
 
-  draw Draw @relation(fields: [drawId], references: [id])
-  deck Deck @relation(fields: [deckId], references: [id])
+  deck Deck  @relation(fields: [deckId], references: [id])
+  draw Draw? @relation(fields: [drawId], references: [id])
 }
 
 model Draw {

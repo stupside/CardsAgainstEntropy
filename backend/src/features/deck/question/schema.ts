@@ -7,12 +7,6 @@ const Reply = Type.Object({
     id: Type.Number(),
     text: Type.String(),
   }),
-  cards: Type.Array(
-    Type.Object({
-      id: Type.Number(),
-      text: Type.String(),
-    })
-  ),
 });
 
 export interface Interface extends RouteGenericInterface {
@@ -21,7 +15,7 @@ export interface Interface extends RouteGenericInterface {
 
 export const Schema: FastifySchema = {
   tags: ["deck"],
-  description: "Distributes random cards and a random question card",
+  description: "Retrieve a random question",
   response: {
     200: Reply,
   },

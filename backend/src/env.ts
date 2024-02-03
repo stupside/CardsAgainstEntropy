@@ -12,6 +12,7 @@ const Schema = Type.Object({
   GAME_BACKEND_URL: Type.String(),
   GAME_FRONTEND_CSR_URL: Type.String(),
   GAME_JWT_EXPIRY: Type.String(),
+  GAME_MAX_CARDS: Type.Number(),
   GAME_MAX_PLAYERS: Type.Number(),
   GAME_CARDS_PATH: Type.String(),
   GAME_QUESTIONS_PATH: Type.String(),

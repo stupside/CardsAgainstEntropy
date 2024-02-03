@@ -8,12 +8,20 @@ const Body = Type.Object({
   }),
 });
 
+const Reply = Type.Object({
+  card: Type.Number(),
+});
+
 export interface Interface extends RouteGenericInterface {
   Body: Static<typeof Body>;
+  Reply: Static<typeof Reply>;
 }
 
 export const Schema: FastifySchema = {
   tags: ["deck"],
-  description: "Draw a card from a deck.",
+  description: "Draw a card from a deck and get a new one back.",
   body: Body,
+  response: {
+    200: Reply,
+  },
 };
