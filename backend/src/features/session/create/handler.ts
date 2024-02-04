@@ -8,6 +8,7 @@ import prisma from "../../../utils/prisma";
 import { getRandomNumber } from "../../../utils/pyth";
 
 import sse from "../sse";
+import resolveSession from "../resolve";
 
 import deck from "../../card/deck";
 import draw from "../../card/draw";
@@ -73,6 +74,7 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
       mapCards.Claim,
       resolveCard.Claim,
       resolveRound.Claim,
+      resolveSession.Claim,
     ],
   };
 
