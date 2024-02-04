@@ -2,11 +2,15 @@ import { DOMAttributes, FC, useEffect, useState } from "react";
 
 import { apiClient } from "@/utils/api";
 
+import useAuth from "@/hooks/useAuth";
+
 const Card: FC<{
   id: number;
   onClick?: DOMAttributes<HTMLElement>["onClick"];
 }> = ({ id, onClick }) => {
   const [text, setText] = useState<string>();
+
+  const { token } = useAuth();
 
   useEffect(() => {
     const handle = async () => {
@@ -16,6 +20,9 @@ const Card: FC<{
             card: id,
           },
         },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.data) {
@@ -24,7 +31,7 @@ const Card: FC<{
     };
 
     handle();
-  }, [id]);
+  }, [id, token]);
 
   return (
     <article

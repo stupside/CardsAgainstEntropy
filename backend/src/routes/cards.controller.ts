@@ -6,7 +6,7 @@ import draw from "../features/card/draw";
 import resolve from "../features/card/resolve";
 
 const route = async (fastify: FastifyInstance) => {
-  fastify.get("/", deck.Shorthand, deck.Route(fastify));
+  fastify.get("", deck.Shorthand, deck.Route(fastify));
   // GET
   fastify.get("/:card", resolve.Shorthand, resolve.Route(fastify));
   // POST

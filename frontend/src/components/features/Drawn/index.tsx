@@ -1,7 +1,13 @@
-import Card from "@/components/commons/Card";
-import useSse from "@/hooks/useSse";
-import { apiClient } from "@/utils/api";
+"use client";
+
 import { FC, useEffect, useState } from "react";
+
+import useSse from "@/hooks/useSse";
+import useAuth from "@/hooks/useAuth";
+
+import { apiClient } from "@/utils/api";
+
+import Card from "@/components/commons/Card";
 
 const Drawn: FC = () => {
   const [cards, setCards] = useState<Array<number>>([]);
@@ -24,9 +30,15 @@ const Drawn: FC = () => {
     },
   });
 
+  const { token } = useAuth();
+
   useEffect(() => {
     const handle = async () => {
-      const response = await apiClient().GET("/rounds/");
+      const response = await apiClient().GET("/rounds", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.data) {
         setCards(response.data.cards);
@@ -34,7 +46,7 @@ const Drawn: FC = () => {
     };
 
     handle();
-  }, []);
+  }, [token]);
 
   return (
     <section className="flex gap-x-5">
