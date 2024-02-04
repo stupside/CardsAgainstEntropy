@@ -30,7 +30,6 @@
     }
     .selected {
         background-color: #cccccc;
-
     }
 
 </style>
