@@ -13,6 +13,8 @@ import sse from "../../session/sse";
 
 import resolveRound from "../../round/resolve";
 
+import resolveSession from "../resolve";
+
 import { Interface } from "./schema";
 
 export const Handler: MyRoute<Interface> =
@@ -89,6 +91,7 @@ export const Handler: MyRoute<Interface> =
         mapCards.Claim,
         resolveCard.Claim,
         resolveRound.Claim,
+        resolveSession.Claim,
       ],
     };
 
