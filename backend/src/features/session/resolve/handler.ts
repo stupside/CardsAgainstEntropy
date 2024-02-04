@@ -1,6 +1,4 @@
-import { OutgoingHttpHeaders } from "http2";
-
-import { MyRoute, subscribe } from "../../../fastify";
+import { MyRoute } from "../../../fastify";
 
 import { Interface } from "./schema";
 import prisma from "../../../utils/prisma";
