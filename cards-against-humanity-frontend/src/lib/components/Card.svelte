@@ -4,20 +4,33 @@
 
 </script>
 
-<article class={`card ${isSelected ? 'selected' : ''}`}>
-    {responseCard.text.text}
-</article>
+<div class={`white-card ${isSelected ? 'selected' : ''}`}>
+    <div class="textbox">
+        {responseCard.text.text}
+    </div>
+</div>
 
 <style>
-    .card {
-        /* Basic styling */
-        padding: 10px;
-        border: 1px solid #ccc;
-        margin: 5px;
-        cursor: pointer;
-        user-select: none;
+    .white-card {
+        background-color: white;
+        color: black;
+        width: 200px;
+        height: 400px;
+        border-radius: 35px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: black;
+        border-style: solid;
+        border-color: black;
+        border-width: 1px;
+    }
+    .textbox {
+        height: 20%;
+        margin: 20px;
     }
     .selected {
-        border-color: blue;
+        background-color: #cccccc;
+
     }
+
 </style>

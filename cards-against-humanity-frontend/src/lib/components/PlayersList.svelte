@@ -1,7 +1,15 @@
 <script>
-    export let players = [];
+    export let game;
+
+    let players = game.players;
     const handleNext = () => {
         console.log('Next button clicked');
+        if (game.gameStep === 0) {
+            game.gameStep = 1;
+        }
+        else {
+            game.gameStep = 0
+        }
         // Implement the logic to go to the next set of actions or players
     };
 </script>
@@ -13,6 +21,7 @@
         </div>
     {/each}
     <button on:click={handleNext}>Next</button>
+    <div class="game-code">Game code: {localStorage.getItem('invitation')}</div>
 </div>
 
 <style>
@@ -41,5 +50,9 @@
         display: block;
         margin-top: 10px;
         width: 100%;
+    }
+
+    .game-code {
+        margin-top: 10px;
     }
 </style>

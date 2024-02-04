@@ -5,7 +5,7 @@
 
     // Updated handleCreate function
     async function handleCreate(event){
-            const response = await fetch('http://127.0.0.1:3000/sessions', {
+            const response = await fetch('http://127.0.0.1:3000/sessions/create', {
                 method: 'POST',
                 body: {}
             });
@@ -20,6 +20,8 @@
             localStorage.setItem('deck', payload.deck);
             localStorage.setItem('session', payload.session);
             localStorage.setItem('token', payload.token);
+            localStorage.setItem('cards', payload.cards);
+            localStorage.setItem('invitation', payload.invitation)
 
             // Redirect to the game page
             goto('/'); // Assuming the game page is the root
@@ -43,11 +45,10 @@
         localStorage.setItem('session', payload.session);
         localStorage.setItem('token', payload.token);
         localStorage.setItem('cards', payload.cards);
+        localStorage.setItem('invitation', invitationCode);
 
         // Redirect to the game page
-        goto('/'); // Assuming the game page is the root
-        // Handle errors, perhaps show an error message to the user
-        // Implement the logic to join with an invitation code
+        goto('/');
     };
 
 </script>

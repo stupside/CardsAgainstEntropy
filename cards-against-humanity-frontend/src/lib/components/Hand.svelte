@@ -2,7 +2,7 @@
     import Card from '$lib/components/Card.svelte';
 
     export let playerCards;
-    let selectedCard = null;
+    let selectedCard = playerCards[0];
 
     function selectCard(card) {
         selectedCard = card;
