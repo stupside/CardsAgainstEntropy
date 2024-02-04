@@ -1,8 +1,5 @@
 <script>
-    import JoinSession from '$lib/components/JoinSession.svelte';
+  import JoinSession from "$lib/components/JoinSession.svelte";
 </script>
 
-
 <JoinSession />
-
-
