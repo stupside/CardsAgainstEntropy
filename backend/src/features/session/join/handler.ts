@@ -23,6 +23,16 @@ export const Handler: MyRoute<Interface> =
 
     const session = Number.parseInt(value);
 
+    if (Number.isNaN(session)) return response.unauthorized();
+
+    const rounds = await prisma.round.count({
+      where: {
+        sessionId: session,
+      },
+    });
+
+    if (rounds) return response.unauthorized("The game has already started.");
+
     const decks = await prisma.deck.count({
       where: {
         sessionId: session,
@@ -77,9 +87,9 @@ export const Handler: MyRoute<Interface> =
 
     const token = await response.jwtSign(payload);
 
-    const gameready = decks === fastify.config.GAME_MAX_PLAYERS;
+    const full = decks === fastify.config.GAME_MAX_PLAYERS;
 
-    if (gameready) {
+    if (full) {
       await fastify.redis.invitations?.del(invitation);
     }
 
@@ -89,7 +99,7 @@ export const Handler: MyRoute<Interface> =
       event: {
         type: "/session/join",
         data: {
-          gameready,
+          full,
           deck: deck.id,
         },
       },

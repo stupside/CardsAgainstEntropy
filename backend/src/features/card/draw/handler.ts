@@ -1,5 +1,7 @@
 import { MyRoute, dispatch } from "../../../fastify";
 
+import { getCards } from "../../../utils/cards";
+
 import prisma from "../../../utils/prisma";
 
 import { Interface } from "./schema";
@@ -30,9 +32,10 @@ export const Handler: MyRoute<Interface> =
       },
     });
 
-    // Can the user draw a card
     if (round === null) {
-      return response.badRequest("The draw does not exist");
+      return response.badRequest(
+        "No round found. Call next round to start one"
+      );
     }
 
     // Check if the user already has a card from this deck drawn
@@ -77,6 +80,10 @@ export const Handler: MyRoute<Interface> =
         },
       });
 
+      if (externalCardId === (await getCards(fastify)).list.length - 1) {
+        return response.badRequest("No more cards to draw");
+      }
+
       // Add a new card to the deck as we have drawn one
       const card = await prisma.card.create({
         data: {
@@ -97,7 +104,6 @@ export const Handler: MyRoute<Interface> =
       event: {
         type: "/card/draw",
         data: {
-          card: target.id,
           deck: identity.deck,
         },
       },

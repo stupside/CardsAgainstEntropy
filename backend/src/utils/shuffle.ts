@@ -1,6 +1,7 @@
 import { createHash } from "crypto";
 
-// Knuth shuffle
+// Knuth shuffle algorithm
+// (Fisher-Yates) with a seed for deterministic shuffling
 export const shuffleArrayIndexes = <TValue>(
   seed: number,
   array: Array<TValue>

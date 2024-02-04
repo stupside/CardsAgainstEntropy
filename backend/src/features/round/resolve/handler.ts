@@ -37,7 +37,9 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
   });
 
   if (round === null) {
-    return response.notFound();
+    return response.notFound(
+      "No round started yet. Call next round to start one."
+    );
   }
 
   const cards = await getCards(fastify);
