@@ -1,19 +1,20 @@
+"use client";
+
 import { type FC, type PropsWithChildren, useEffect, useState } from "react";
 
 import EventSource from "eventsource";
 
-import SseContext from "./Context";
+import useAuth from "@/hooks/useAuth";
 
-const Sse: FC<PropsWithChildren<{ url: string; token: string }>> = ({
-  url,
-  token,
-  children,
-}) => {
+import SseContext from "@/contexts/SseContext";
+
+const Sse: FC<PropsWithChildren<{ url: string }>> = ({ url, children }) => {
   const [source, setSource] = useState<EventSource>();
+
+  const { token } = useAuth();
 
   useEffect(() => {
     const source = new EventSource(url, {
-      withCredentials: true,
       headers: {
         Authorization: `Bearer ${token}`,
       },

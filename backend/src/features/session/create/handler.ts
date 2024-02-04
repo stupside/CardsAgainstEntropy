@@ -22,75 +22,77 @@ import { Interface } from "./schema";
 
 const REDIS_HASH_KEY_LEN = 32;
 
-export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
-  const seed = getRandomNumber();
+export const Handler: MyRoute<Interface> =
+  (fastify) => async (request, response) => {
+    const seed = getRandomNumber();
 
-  const session = await prisma.session.create({
-    data: {
-      seed,
-      decks: {
-        create: {
-          cards: {
-            createMany: {
-              data: Array.from({
-                length: fastify.config.GAME_MAX_CARDS,
-              }).map((_, index) => ({
-                cardIndex: index,
-              })),
+    const session = await prisma.session.create({
+      data: {
+        seed,
+        name: request.body.name,
+        decks: {
+          create: {
+            cards: {
+              createMany: {
+                data: Array.from({
+                  length: fastify.config.GAME_MAX_CARDS,
+                }).map((_, index) => ({
+                  cardIndex: index,
+                })),
+              },
             },
           },
         },
       },
-    },
-    select: {
-      id: true,
-      decks: {
-        select: {
-          id: true,
-          cards: {
-            select: {
-              id: true,
+      select: {
+        id: true,
+        decks: {
+          select: {
+            id: true,
+            cards: {
+              select: {
+                id: true,
+              },
             },
           },
         },
       },
-    },
-  });
+    });
 
-  const myDeck = session.decks.at(0);
+    const myDeck = session.decks.at(0);
 
-  if (myDeck === undefined) {
-    return response.internalServerError();
-  }
+    if (myDeck === undefined) {
+      return response.internalServerError();
+    }
 
-  const payload: Static<typeof GameSessionSchema> = {
-    deck: myDeck.id,
-    session: session.id,
-    claims: [
-      sse.Claim,
-      deck.Claim,
-      draw.Claim,
-      next.Claim,
-      mapCards.Claim,
-      resolveCard.Claim,
-      resolveRound.Claim,
-      resolveSession.Claim,
-    ],
+    const payload: Static<typeof GameSessionSchema> = {
+      deck: myDeck.id,
+      session: session.id,
+      claims: [
+        sse.Claim,
+        deck.Claim,
+        draw.Claim,
+        next.Claim,
+        mapCards.Claim,
+        resolveCard.Claim,
+        resolveRound.Claim,
+        resolveSession.Claim,
+      ],
+    };
+
+    const token = await response.jwtSign(payload);
+
+    const invitation = generateKeySync("hmac", { length: REDIS_HASH_KEY_LEN })
+      .export()
+      .toString("hex");
+
+    await fastify.redis.invitations?.set(invitation, session.id);
+
+    return await response.send({
+      token,
+      deck: myDeck.id,
+      session: session.id,
+      invitation: invitation,
+      cards: myDeck.cards.map((card) => card.id),
+    });
   };
-
-  const token = await response.jwtSign(payload);
-
-  const invitation = generateKeySync("hmac", { length: REDIS_HASH_KEY_LEN })
-    .export()
-    .toString("hex");
-
-  await fastify.redis.invitations?.set(invitation, session.id);
-
-  return await response.send({
-    token,
-    deck: myDeck.id,
-    session: session.id,
-    invitation: invitation,
-    cards: myDeck.cards.map((card) => card.id),
-  });
-};

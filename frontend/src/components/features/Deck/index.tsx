@@ -1,22 +1,32 @@
+"use client";
+
 import { FC, useCallback, useEffect, useState } from "react";
 
 import { apiClient } from "@/utils/api";
 
 import useSse from "@/hooks/useSse";
+import useAuth from "@/hooks/useAuth";
+
+import DeckContext from "@/contexts/DeckContext";
 
 import Card from "@/components/commons/Card";
-import DeckContext from "@/contexts/DeckContext";
 
 const Deck: FC<{ deck: number }> = ({ deck }) => {
   const [cards, setCards] = useState<Array<number>>([]);
 
+  const { token } = useAuth();
+
   const fetch = useCallback(async () => {
-    const response = await apiClient().GET("/cards/");
+    const response = await apiClient().GET("/cards", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (response.data) {
       setCards(response.data);
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     fetch();
@@ -44,6 +54,9 @@ const Deck: FC<{ deck: number }> = ({ deck }) => {
               await apiClient().POST("/cards/draw", {
                 body: {
                   card,
+                },
+                headers: {
+                  Authorization: `Bearer ${token}`,
                 },
               });
             }}

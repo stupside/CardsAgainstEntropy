@@ -1,5 +1,6 @@
-import SseContext from "@/components/features/Sse/Context";
 import { useContext, useEffect, useState } from "react";
+
+import SseContext from "@/contexts/SseContext";
 
 export type SseEventMap = {
   "/card/draw": { deck: number; card: number };

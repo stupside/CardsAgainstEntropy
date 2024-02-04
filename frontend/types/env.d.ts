@@ -1,6 +1,6 @@
 declare var process: {
   env: {
-    GAME_BACKEND_URL: string;
-    GAME_BACKEND_SSE_PATH: string;
+    NEXT_PUBLIC_GAME_BACKEND_URL: string;
+    NEXT_PUBLIC_GAME_BACKEND_SSE_PATH: string;
   };
 };

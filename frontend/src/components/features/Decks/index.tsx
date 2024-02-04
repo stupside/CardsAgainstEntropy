@@ -1,6 +1,10 @@
+"use client";
+
 import { FC, useEffect, useState } from "react";
 
 import useSse from "@/hooks/useSse";
+import useAuth from "@/hooks/useAuth";
+
 import { apiClient } from "@/utils/api";
 
 const Decks: FC<{ invitation: string }> = ({ invitation }) => {
@@ -17,9 +21,15 @@ const Decks: FC<{ invitation: string }> = ({ invitation }) => {
     },
   });
 
+  const { token } = useAuth();
+
   useEffect(() => {
     const handle = async () => {
-      const response = await apiClient().GET("/sessions/");
+      const response = await apiClient().GET("/sessions", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.data) {
         setDecks(response.data.decks);
@@ -27,12 +37,12 @@ const Decks: FC<{ invitation: string }> = ({ invitation }) => {
     };
 
     handle();
-  });
+  }, [token]);
 
   return (
     <div className="flex gap-x-5">
       {full ? <span>Session full</span> : <span>Invitation: {invitation}</span>}
-      <div>Decks: {decks}</div>
+      <div>Players: {decks.length}</div>
     </div>
   );
 };

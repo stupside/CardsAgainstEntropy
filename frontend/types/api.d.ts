@@ -5,7 +5,7 @@
 
 
 export interface paths {
-  "/cards/": {
+  "/cards": {
     /** @description Get your deck of cards. */
     get: {
       responses: {
@@ -84,7 +84,7 @@ export interface paths {
       };
     };
   };
-  "/rounds/": {
+  "/rounds": {
     /** @description Get status of the current round */
     get: {
       responses: {
@@ -103,7 +103,7 @@ export interface paths {
   };
   "/rounds/next": {
     /** @description Go to the next round */
-    post: {
+    get: {
       responses: {
         /** @description Default Response */
         200: {
@@ -128,7 +128,7 @@ export interface paths {
       };
     };
   };
-  "/sessions/": {
+  "/sessions": {
     /** @description Subscribe to the session events. */
     get: {
       responses: {
@@ -175,6 +175,14 @@ export interface paths {
   "/sessions/create": {
     /** @description Create a session. */
     post: {
+      requestBody: {
+        content: {
+          "application/json": {
+            /** @description The name of the session */
+            name: string;
+          };
+        };
+      };
       responses: {
         /** @description Default Response */
         200: {

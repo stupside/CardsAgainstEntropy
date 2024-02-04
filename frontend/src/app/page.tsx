@@ -4,15 +4,19 @@ import Link from "next/link";
 
 const Page: NextPage = async () => {
   return (
-    <div className="flex gap-10">
+    <div className="flex gap-10 m-auto">
       <Link
-        href="/new"
+        href="/session"
         title="Create a new session"
-      />
+      >
+        Create a new session
+      </Link>
       <Link
-        href="/join"
+        href="/session/join"
         title="Join an existing session"
-      />
+      >
+        Join an existing session
+      </Link>
     </div>
   );
 };
