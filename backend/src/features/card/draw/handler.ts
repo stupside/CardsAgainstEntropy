@@ -45,7 +45,7 @@ export const Handler: MyRoute<Interface> =
       );
     }
 
-    const target = await prisma.card.findFirst({
+    const draw = await prisma.card.findFirst({
       where: {
         id: request.body.card,
         deckId: identity.deck,
@@ -55,7 +55,7 @@ export const Handler: MyRoute<Interface> =
       },
     });
 
-    if (target === null) {
+    if (draw === null) {
       return response.badRequest(
         "You are not allowed to draw this card. The card does not exist in your deck."
       );
@@ -67,12 +67,12 @@ export const Handler: MyRoute<Interface> =
         roundId: round.id,
       },
       where: {
-        id: target.id,
+        id: draw.id,
       },
     });
 
-    const card = await prisma.$transaction(async () => {
-      const externalCardId = await prisma.card.count({
+    const created = await prisma.$transaction(async () => {
+      const cardIndex = await prisma.card.count({
         where: {
           deck: {
             sessionId: identity.session,
@@ -80,22 +80,20 @@ export const Handler: MyRoute<Interface> =
         },
       });
 
-      if (externalCardId === (await getCards(fastify)).list.length - 1) {
+      if (cardIndex === (await getCards(fastify)).list.length - 1) {
         return response.badRequest("No more cards to draw");
       }
 
       // Add a new card to the deck as we have drawn one
-      const card = await prisma.card.create({
+      return await prisma.card.create({
         data: {
-          externalCardId,
+          cardIndex,
           deckId: identity.deck,
         },
         select: {
           id: true,
         },
       });
-
-      return card;
     });
 
     await dispatch({
@@ -110,6 +108,6 @@ export const Handler: MyRoute<Interface> =
     });
 
     return response.send({
-      card: card.id,
+      card: created.id,
     });
   };

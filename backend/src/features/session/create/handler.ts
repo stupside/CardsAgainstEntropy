@@ -11,6 +11,7 @@ import sse from "../sse";
 
 import deck from "../../card/deck";
 import draw from "../../card/draw";
+import mapCards from "../../card/map";
 import resolveCard from "../../card/resolve";
 
 import next from "../../round/next";
@@ -33,7 +34,7 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
               data: Array.from({
                 length: fastify.config.GAME_MAX_CARDS,
               }).map((_, index) => ({
-                externalCardId: index,
+                cardIndex: index,
               })),
             },
           },
@@ -69,6 +70,7 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
       deck.Claim,
       draw.Claim,
       next.Claim,
+      mapCards.Claim,
       resolveCard.Claim,
       resolveRound.Claim,
     ],

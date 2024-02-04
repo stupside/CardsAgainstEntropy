@@ -35,7 +35,7 @@ model Card {
   deckId  Int
   roundId Int?
 
-  externalCardId Int
+  cardIndex Int
 
   deck  Deck   @relation(fields: [deckId], references: [id])
   round Round? @relation(fields: [roundId], references: [id])

@@ -27,7 +27,5 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
     },
   });
 
-  return response.send({
-    cards: deck.map((card) => card.id),
-  });
+  return response.send(deck.map((card) => card.id));
 };

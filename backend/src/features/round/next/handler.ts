@@ -25,7 +25,7 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
     );
   }
 
-  const round = await prisma.round.create({
+  const created = await prisma.round.create({
     data: {
       sessionId: identity.session,
     },
@@ -40,12 +40,12 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
     event: {
       type: "/round/next",
       data: {
-        round: round.id,
+        round: created.id,
       },
     },
   });
 
   return response.send({
-    round: round.id,
+    round: created.id,
   });
 };

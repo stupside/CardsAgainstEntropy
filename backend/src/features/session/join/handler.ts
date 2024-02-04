@@ -4,7 +4,9 @@ import { MyRoute, dispatch, GameSessionSchema } from "../../../fastify";
 
 import prisma from "../../../utils/prisma";
 
+import deck from "../../card/deck";
 import draw from "../../card/draw";
+import mapCards from "../../card/map";
 import resolveCard from "../../card/resolve";
 
 import sse from "../../session/sse";
@@ -43,7 +45,7 @@ export const Handler: MyRoute<Interface> =
       return response.unauthorized("Too many players.");
     }
 
-    const deck = await prisma.$transaction(async () => {
+    const created = await prisma.$transaction(async () => {
       const cards = await prisma.card.count({
         where: {
           deck: {
@@ -52,7 +54,7 @@ export const Handler: MyRoute<Interface> =
         },
       });
 
-      const deck = await prisma.deck.create({
+      return prisma.deck.create({
         data: {
           sessionId: session,
           cards: {
@@ -60,7 +62,7 @@ export const Handler: MyRoute<Interface> =
               data: Array.from({
                 length: fastify.config.GAME_MAX_CARDS,
               }).map((_, index) => ({
-                externalCardId: cards + index,
+                cardIndex: cards + index,
               })),
             },
           },
@@ -75,14 +77,19 @@ export const Handler: MyRoute<Interface> =
           },
         },
       });
-
-      return deck;
     });
 
     const payload: Static<typeof GameSessionSchema> = {
-      deck: deck.id,
-      session: deck.sessionId,
-      claims: [sse.Claim, draw.Claim, resolveCard.Claim, resolveRound.Claim],
+      deck: created.id,
+      session: created.sessionId,
+      claims: [
+        sse.Claim,
+        draw.Claim,
+        deck.Claim,
+        mapCards.Claim,
+        resolveCard.Claim,
+        resolveRound.Claim,
+      ],
     };
 
     const token = await response.jwtSign(payload);
@@ -100,15 +107,15 @@ export const Handler: MyRoute<Interface> =
         type: "/session/join",
         data: {
           full,
-          deck: deck.id,
+          deck: created.id,
         },
       },
     });
 
     return await response.send({
       token,
-      deck: deck.id,
-      session: deck.sessionId,
-      cards: deck.cards.map((card) => card.id),
+      deck: created.id,
+      session: created.sessionId,
+      cards: created.cards.map((card) => card.id),
     });
   };
