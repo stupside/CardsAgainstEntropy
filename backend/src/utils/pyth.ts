@@ -58,5 +58,6 @@
 //   return txReveal;
 // }
 
-
-export function getRandomNumber() {return 42}  // for test reasons
+export function getRandomNumber() {
+  return Math.random();
+} // for test reasons
