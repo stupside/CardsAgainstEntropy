@@ -31,7 +31,7 @@ export const Handler: MyRoute<Interface> =
             },
           },
         },
-        externalCardId: true,
+        cardIndex: true,
       },
     });
 
@@ -42,7 +42,7 @@ export const Handler: MyRoute<Interface> =
     const cards = await getCards(fastify);
 
     const value = shuffleArrayIndexes(card.deck.session.seed, cards.list)[
-      card.externalCardId
+      card.cardIndex
     ];
 
     if (value === undefined) {

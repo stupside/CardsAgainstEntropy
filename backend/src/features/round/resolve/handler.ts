@@ -44,14 +44,14 @@ export const Handler: MyRoute<Interface> = (fastify) => async (_, response) => {
 
   const cards = await getCards(fastify);
 
-  const externalQuestionId = await prisma.round.count({
+  const questionIndex = await prisma.round.count({
     where: {
       sessionId: identity.session,
     },
   });
 
   const question = shuffleArrayIndexes(round.session.seed, cards.questions)[
-    externalQuestionId
+    questionIndex
   ];
 
   if (question === undefined) {

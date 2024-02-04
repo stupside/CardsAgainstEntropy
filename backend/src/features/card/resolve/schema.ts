@@ -11,13 +11,14 @@ const Reply = Type.Object({
 });
 
 export interface Interface extends RouteGenericInterface {
+  Reply: Static<typeof Reply>;
   Params: Static<typeof Params>;
 }
 
 export const Schema: FastifySchema = {
   tags: ["card"],
   security: [{ bearerAuth: [] }],
-  description: "Retrieve a random question",
+  description: "Resolve a card",
   params: Params,
   response: {
     200: Reply,
