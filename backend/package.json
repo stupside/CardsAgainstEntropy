@@ -30,7 +30,9 @@
     "fastify": "^4.0.0",
     "fastify-cli": "^5.8.0",
     "fastify-plugin": "^4.0.0",
-    "qrcode": "^1.5.3"
+    "qrcode": "^1.5.3",
+    "web3": "^4.4.0",
+    "web3-utils": "^4.1.1"
   },
   "devDependencies": {
     "@prisma/client": "^5.3.1",
